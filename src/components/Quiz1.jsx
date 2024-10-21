@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import quizData from './quizData.json'; // Adjust the path as necessary
+import quizData from './quizdata.json'; // Adjust the path as necessary
 import './quiz.css';
 
 // Helper function to shuffle an array (Fisher-Yates Shuffle Algorithm)
