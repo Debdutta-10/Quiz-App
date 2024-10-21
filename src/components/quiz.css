@@ -1,0 +1,95 @@
+.quiz-container{
+    margin-top: 100px;
+}
+.all-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 6 equal columns */
+    grid-template-rows: repeat(4, auto);   /* 2 rows, height adjusts to content */
+    gap: 10px;                              /* Gap between buttons */
+    justify-items: center;                  /* Center items horizontally */
+    align-items: center;
+    height: 500px;                    /* Center items vertically */
+}
+.week-button{
+    border: 2px solid white;
+    background-color: #111827;
+    border-radius: 15px;
+    width: 50%;
+    font-size: 20px;
+    height: 50%;
+    color: white;
+}
+.week-button:hover {
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.5), 0 0 10px white; /* Increased shadow for hover */
+    border-color: rgba(255, 255, 255, 0.7); /* Slightly lighter border color */
+}
+.question-container{
+    height: 500px;    
+}
+.q-head{
+    text-align: center;
+    font-size: 30px;
+}
+.option-container{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 6 equal columns */
+    grid-template-rows: repeat(4, auto);   /* 2 rows, height adjusts to content */
+    gap: 10px;                              /* Gap between buttons */
+    justify-items: center;                  /* Center items horizontally */
+    align-items: center;  
+}
+.question-option{
+    border: 2px solid white;
+    background-color: #111827;
+    font-size: 20px;
+    padding: 15px;
+    margin: 10px;
+    color: white;
+    border-radius: 10px;
+}
+.question-option:hover{
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 600px) {
+    .quiz-container{
+        margin-top: 50px;
+    }
+    .all-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* 6 equal columns */
+        grid-template-rows: repeat(6, auto);   /* 2 rows, height adjusts to content */
+        gap: 10px;                              /* Gap between buttons */
+        justify-items: center;                  /* Center items horizontally */
+        align-items: center;
+    }
+    .week-button{
+        width: 50%;
+        border-radius: 5px;
+        font-size: 15px;
+        padding: 10px;
+        height: auto;
+    }
+    .q-head{
+        text-align: center;
+        font-size: 25px;
+    }
+    .option-container{
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* 6 equal columns */
+        grid-template-rows: repeat(4, auto);   /* 2 rows, height adjusts to content */
+        gap: 10px;                              /* Gap between buttons */
+        justify-items: center;                  /* Center items horizontally */
+        align-items: center;  
+    }
+    .question-option{
+        font-size: 15px;
+        padding: 10px;
+        margin: 10px;
+    }
+    .question-option:hover{
+        cursor: pointer;
+    }
+    
+}
