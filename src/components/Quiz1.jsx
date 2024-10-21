@@ -20,6 +20,7 @@ const Quiz = () => {
   const [showResult, setShowResult] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [shuffledOptions, setShuffledOptions] = useState([]); // To store shuffled options for each question
+  const [showCorrectAnswer, setShowCorrectAnswer] = useState(false); // New state to track showing the correct answer
 
   useEffect(() => {
     if (selectedWeek) {
@@ -39,6 +40,7 @@ const Quiz = () => {
       setCurrentQuestionIndex(0);
       setScore(0);
       setShowResult(false);
+      setShowCorrectAnswer(false); // Reset correct answer display
     }
   }, [selectedWeek]);
 
@@ -56,6 +58,7 @@ const Quiz = () => {
       setFeedback('Correct!');
     } else {
       setFeedback('Wrong!');
+      setShowCorrectAnswer(true); // Show the correct answer when the user is wrong
     }
 
     setUserAnswer(answer);
@@ -64,6 +67,7 @@ const Quiz = () => {
     setTimeout(() => {
       setUserAnswer('');
       setFeedback('');
+      setShowCorrectAnswer(false); // Reset for the next question
 
       if (currentQuestionIndex + 1 < questions.length) {
         // Move to next question if not finished
@@ -72,7 +76,7 @@ const Quiz = () => {
         // Automatically show the result after the last question
         setShowResult(true);
       }
-    }, 1000); // Move to next question after 1 second
+    }, 1500); // Adjusted timeout to give more time to read feedback
   };
 
   const handleRestart = () => {
@@ -82,6 +86,7 @@ const Quiz = () => {
     setScore(0);
     setShowResult(false);
     setFeedback('');
+    setShowCorrectAnswer(false); // Reset when restarting
   };
 
   return (
@@ -94,7 +99,6 @@ const Quiz = () => {
               Week {index + 1}
             </button>
           ))}
-          {/* Add a button for combined quiz */}
           <button className='week-button' onClick={() => setSelectedWeek('combined')}>
             Combined Quiz
           </button>
@@ -112,21 +116,24 @@ const Quiz = () => {
                 Q{currentQuestionIndex + 1}: {questions[currentQuestionIndex].question}
               </h3>
               <div className='option-container'>
-                {shuffledOptions.map((option, index) => (
-                  <button className='question-option'
-                    key={index}
-                    onClick={() => handleAnswer(option)}
-                    style={{
-                      backgroundColor: userAnswer === option
-                        ? option === questions[currentQuestionIndex].correctAnswer
-                          ? 'lightgreen'
-                          : 'lightcoral'
-                        : '',
-                    }}
-                  >
-                    {option} {/* Render the option without any prefix */}
-                  </button>
-                ))}
+                {shuffledOptions.map((option, index) => {
+                  const isCorrect = option === questions[currentQuestionIndex].correctAnswer;
+                  const isSelected = userAnswer === option;
+
+                  return (
+                    <button className='question-option'
+                      key={index}
+                      onClick={() => handleAnswer(option)}
+                      style={{
+                        backgroundColor: isSelected 
+                          ? (isCorrect ? 'lightgreen' : 'lightcoral') 
+                          : (showCorrectAnswer && isCorrect ? 'lightgreen' : ''),
+                      }}
+                    >
+                      {option}
+                    </button>
+                  );
+                })}
               </div>
               {feedback && <p className='q-head'>{feedback}</p>}
             </div>
