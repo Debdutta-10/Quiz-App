@@ -21,6 +21,7 @@ const Quiz = () => {
   const [feedback, setFeedback] = useState('');
   const [shuffledOptions, setShuffledOptions] = useState([]); // To store shuffled options for each question
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false); // New state to track showing the correct answer
+  const [disableOptions, setDisableOptions] = useState(false); // New state to disable option buttons
 
   useEffect(() => {
     if (selectedWeek) {
@@ -79,12 +80,14 @@ const Quiz = () => {
     }
 
     setUserAnswer(answer);
+    setDisableOptions(true); // Disable options after user selects an answer
 
     // Check if it's the last question
     setTimeout(() => {
       setUserAnswer('');
       setFeedback('');
       setShowCorrectAnswer(false); // Reset for the next question
+      setDisableOptions(false); // Re-enable options for the next question
 
       if (currentQuestionIndex + 1 < questions.length) {
         // Move to next question if not finished
@@ -104,6 +107,7 @@ const Quiz = () => {
     setShowResult(false);
     setFeedback('');
     setShowCorrectAnswer(false); // Reset when restarting
+    setDisableOptions(false); // Enable options when restarting
   };
 
   return (
@@ -147,6 +151,7 @@ const Quiz = () => {
                     <button className='question-option'
                       key={index}
                       onClick={() => handleAnswer(option)}
+                      disabled={disableOptions} // Disable button after selecting an answer
                       style={{
                         backgroundColor: isSelected
                           ? (isCorrect ? 'lightgreen' : 'lightcoral')
