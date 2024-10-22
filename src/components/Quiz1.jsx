@@ -24,25 +24,42 @@ const Quiz = () => {
 
   useEffect(() => {
     if (selectedWeek) {
+      let selectedQuestions = [];
       if (selectedWeek === 'combined') {
         // Combine all questions from all weeks
-        const combinedQuestions = Object.keys(quizData.weeks).reduce((acc, week) => {
+        selectedQuestions = Object.keys(quizData.weeks).reduce((acc, week) => {
           return acc.concat(quizData.weeks[week].questions);
         }, []);
-
-        // Shuffle the combined questions
-        setQuestions(shuffleArray(combinedQuestions));
+      } else if (selectedWeek === 'week-1-6') {
+        // Combine questions from week 1 to week 6
+        selectedQuestions = Object.keys(quizData.weeks)
+          .filter(week => {
+            const weekNumber = parseInt(week.split('-')[1], 10); // Extract the week number
+            return weekNumber >= 1 && weekNumber <= 6;
+          })
+          .reduce((acc, week) => acc.concat(quizData.weeks[week].questions), []);
+      } else if (selectedWeek === 'week-7-12') {
+        // Combine questions from week 7 to week 12
+        selectedQuestions = Object.keys(quizData.weeks)
+          .filter(week => {
+            const weekNumber = parseInt(week.split('-')[1], 10); // Extract the week number
+            return weekNumber >= 7 && weekNumber <= 12;
+          })
+          .reduce((acc, week) => acc.concat(quizData.weeks[week].questions), []);
       } else {
-        // Load questions for the selected week
-        setQuestions(quizData.weeks[selectedWeek].questions);
+        // Load questions for the specific selected week
+        selectedQuestions = quizData.weeks[selectedWeek].questions;
       }
 
+      // Shuffle the selected questions
+      setQuestions(shuffleArray(selectedQuestions));
       setCurrentQuestionIndex(0);
       setScore(0);
       setShowResult(false);
       setShowCorrectAnswer(false); // Reset correct answer display
     }
   }, [selectedWeek]);
+
 
   useEffect(() => {
     if (questions.length > 0) {
@@ -102,6 +119,12 @@ const Quiz = () => {
           <button className='week-button' onClick={() => setSelectedWeek('combined')}>
             Combined Quiz
           </button>
+          <button className='week-button' onClick={() => setSelectedWeek('week-1-6')}>
+            Week 1-6
+          </button>
+          <button className='week-button' onClick={() => setSelectedWeek('week-7-12')}>
+            Week 7-12
+          </button>
         </div>
       ) : showResult ? (
         <div>
@@ -125,8 +148,8 @@ const Quiz = () => {
                       key={index}
                       onClick={() => handleAnswer(option)}
                       style={{
-                        backgroundColor: isSelected 
-                          ? (isCorrect ? 'lightgreen' : 'lightcoral') 
+                        backgroundColor: isSelected
+                          ? (isCorrect ? 'lightgreen' : 'lightcoral')
                           : (showCorrectAnswer && isCorrect ? 'lightgreen' : ''),
                       }}
                     >
