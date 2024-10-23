@@ -20,51 +20,46 @@ const Quiz = () => {
   const [showResult, setShowResult] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [shuffledOptions, setShuffledOptions] = useState([]); // To store shuffled options for each question
-  const [showCorrectAnswer, setShowCorrectAnswer] = useState(false); // New state to track showing the correct answer
-  const [disableOptions, setDisableOptions] = useState(false); // New state to disable option buttons
+  const [showCorrectAnswer, setShowCorrectAnswer] = useState(false); // Track showing the correct answer
+  const [disableOptions, setDisableOptions] = useState(false); // Disable option buttons after selection
+  const [incorrectQuestions, setIncorrectQuestions] = useState([]); // Store incorrect questions
 
   useEffect(() => {
     if (selectedWeek) {
       let selectedQuestions = [];
       if (selectedWeek === 'combined') {
-        // Combine all questions from all weeks
         selectedQuestions = Object.keys(quizData.weeks).reduce((acc, week) => {
           return acc.concat(quizData.weeks[week].questions);
         }, []);
       } else if (selectedWeek === 'week-1-6') {
-        // Combine questions from week 1 to week 6
         selectedQuestions = Object.keys(quizData.weeks)
           .filter(week => {
-            const weekNumber = parseInt(week.split('-')[1], 10); // Extract the week number
+            const weekNumber = parseInt(week.split('-')[1], 10);
             return weekNumber >= 1 && weekNumber <= 6;
           })
           .reduce((acc, week) => acc.concat(quizData.weeks[week].questions), []);
       } else if (selectedWeek === 'week-7-12') {
-        // Combine questions from week 7 to week 12
         selectedQuestions = Object.keys(quizData.weeks)
           .filter(week => {
-            const weekNumber = parseInt(week.split('-')[1], 10); // Extract the week number
+            const weekNumber = parseInt(week.split('-')[1], 10);
             return weekNumber >= 7 && weekNumber <= 12;
           })
           .reduce((acc, week) => acc.concat(quizData.weeks[week].questions), []);
       } else {
-        // Load questions for the specific selected week
         selectedQuestions = quizData.weeks[selectedWeek].questions;
       }
 
-      // Shuffle the selected questions
       setQuestions(shuffleArray(selectedQuestions));
       setCurrentQuestionIndex(0);
       setScore(0);
       setShowResult(false);
-      setShowCorrectAnswer(false); // Reset correct answer display
+      setShowCorrectAnswer(false);
+      setIncorrectQuestions([]); // Reset incorrect questions when starting a new quiz
     }
   }, [selectedWeek]);
 
-
   useEffect(() => {
     if (questions.length > 0) {
-      // Shuffle options when the current question changes
       setShuffledOptions(shuffleArray([...questions[currentQuestionIndex].options]));
     }
   }, [currentQuestionIndex, questions]);
@@ -76,27 +71,33 @@ const Quiz = () => {
       setFeedback('Correct!');
     } else {
       setFeedback('Wrong!');
-      setShowCorrectAnswer(true); // Show the correct answer when the user is wrong
+      setShowCorrectAnswer(true);
+
+      // Add incorrect question to the list
+      setIncorrectQuestions((prev) => [
+        ...prev,
+        {
+          question: questions[currentQuestionIndex].question,
+          correctAnswer,
+        },
+      ]);
     }
 
     setUserAnswer(answer);
-    setDisableOptions(true); // Disable options after user selects an answer
+    setDisableOptions(true);
 
-    // Check if it's the last question
     setTimeout(() => {
       setUserAnswer('');
       setFeedback('');
-      setShowCorrectAnswer(false); // Reset for the next question
-      setDisableOptions(false); // Re-enable options for the next question
+      setShowCorrectAnswer(false);
+      setDisableOptions(false);
 
       if (currentQuestionIndex + 1 < questions.length) {
-        // Move to next question if not finished
         setCurrentQuestionIndex(currentQuestionIndex + 1);
       } else {
-        // Automatically show the result after the last question
         setShowResult(true);
       }
-    }, 1500); // Adjusted timeout to give more time to read feedback
+    }, 1500);
   };
 
   const handleRestart = () => {
@@ -106,8 +107,9 @@ const Quiz = () => {
     setScore(0);
     setShowResult(false);
     setFeedback('');
-    setShowCorrectAnswer(false); // Reset when restarting
-    setDisableOptions(false); // Enable options when restarting
+    setShowCorrectAnswer(false);
+    setDisableOptions(false);
+    setIncorrectQuestions([]); // Reset incorrect questions when restarting
   };
 
   return (
@@ -134,6 +136,20 @@ const Quiz = () => {
         <div>
           <h2 className='q-head'>Your Score: {score} out of {questions.length}</h2>
           <button style={{ display: "block", margin: "auto", backgroundColor: "#111827", color: "white", border: "2px solid white", padding: "10px" }} className='q-head' onClick={handleRestart}>Restart Quiz</button>
+
+          {incorrectQuestions.length > 0 && (
+            <div className='incorrect-ans'>
+              <h3 className='q-head'>Review Incorrect Questions:</h3>
+              <div>
+                {incorrectQuestions.map((item, index) => (
+                  <div key={index}>
+                    <p><strong>Question:</strong> {item.question}</p>
+                    <p style={{color:"lightgreen"}}><strong>Correct Answer:</strong> {item.correctAnswer}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <div>
@@ -151,7 +167,7 @@ const Quiz = () => {
                     <button className='question-option'
                       key={index}
                       onClick={() => handleAnswer(option)}
-                      disabled={disableOptions} // Disable button after selecting an answer
+                      disabled={disableOptions}
                       style={{
                         backgroundColor: isSelected
                           ? (isCorrect ? 'lightgreen' : 'lightcoral')

@@ -1,5 +1,5 @@
 .quiz-container{
-    margin-top: 100px;
+    margin-top: 60px;
 }
 .all-container {
     display: grid;
@@ -92,4 +92,27 @@
         cursor: pointer;
     }
     
+}
+.incorrect-ans{
+    border: 2px solid white;
+    border-radius: 20px;
+    width: 80%;
+    margin: auto;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+.incorrect-ans h1{
+    text-align: center;
+}
+.incorrect-ans div{
+    padding: 5px;
+    font-size: 17px;
+    text-align: center;
+    list-style-type: none;
+}
+.incorrect-ans ul p{
+    text-align: center;
+    font-size: 17px;
 }
